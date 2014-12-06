@@ -1,0 +1,13 @@
+/build
+/spec
+/deps/libgit2/build
+/deps/libgit2/tests-clar
+*.a
+*.o
+*.coffee
+*.log
+*~
+.travis.yml
+.node-version
+.npmignore
+.gitmodules

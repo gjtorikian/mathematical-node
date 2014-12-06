@@ -1,0 +1,45 @@
+{
+  "name": "mathematical",
+  "description": "Quickly convert math equations into beautiful SVGs/PNGs/MathML.",
+  "version": "0.0.1",
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "author": [
+    {
+      "name": "Garen J. Torikian",
+      "email": "gjtorikian@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gjtorikian/mathematical-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gjtorikian/mathematical-node/issues"
+  },
+  "keywords": [
+    "tex",
+    "latex",
+    "svg",
+    "png",
+    "mathml"
+  ],
+  "main": "./lib/mathematical.js",
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-coffee": "~0.9.0",
+    "grunt-shell": "~0.2.1",
+    "grunt-cli": "~0.1.6",
+    "underscore": "~1.5.2",
+    "jasmine-focused": "^1.0.4",
+    "node-cpplint": "~0.1.5",
+    "grunt-coffeelint": "0.0.6"
+  },
+  "scripts": {
+    "prepublish": "grunt clean coffee lint",
+    "test": "grunt test"
+  }
+}

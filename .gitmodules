@@ -1,0 +1,8 @@
+[submodule "deps/mtex2MML"]
+	path = deps/mtex2MML
+	url = https://github.com/gjtorikian/mtex2MML
+  ignore = dirty
+[submodule "deps/lasem"]
+	path = deps/lasem
+	url = git://git.gnome.org/lasem
+  ignore = dirty
