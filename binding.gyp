@@ -4,7 +4,7 @@
       'target_name': 'processor',
       'dependencies': [
         'lasem',
-        'mtex2mml'
+        'mtex2MML'
       ],
       'sources': [ 'src/processor.cc' ],
       'xcode_settings': {
@@ -263,7 +263,7 @@
       ]
     },
     {
-      'target_name': 'mtex2mml',
+      'target_name': 'mtex2MML',
       'sources': [
         'deps/mtex2MML/src/color_definitions.c',
         'deps/mtex2MML/src/lex.yy.c',
