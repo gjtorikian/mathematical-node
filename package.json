@@ -43,7 +43,7 @@
   },
   "scripts": {
     "prepublish": "grunt clean coffee lint",
-    "preinstall": "grunt shell:compile_mtex2MML",
+    "preinstall": "script/compile_mtex2MML",
     "test": "grunt test"
   }
 }

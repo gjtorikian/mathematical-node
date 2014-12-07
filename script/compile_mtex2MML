@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+cd deps/mtex2MML/src
+make clean
+make

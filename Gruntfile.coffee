@@ -34,7 +34,7 @@ module.exports = (grunt) ->
 
     shell:
       compile_mtex2MML:
-        command: 'cd deps/mtex2MML/src && make'
+        command: 'script/compile_mtex2MML'
         options:
           stdout: true
           stderr: true
