@@ -1,3 +1,5 @@
+{Processor} = require('../build/Release/processor.node')
+_ = require 'underscore'
 
 FORMAT_TYPES = ["svg", "png", "mathml"]
 
@@ -8,6 +10,11 @@ DEFAULT_OPTS =
   maxsize: 0
   format: "svg"
 
-class Mathematical
+module.exports = class Mathematical
   constructor: (opts = {}) ->
-    @name = name
+    @config = _.extend(DEFAULT_OPTS, opts)
+
+    @processor = new Processor(@config)
+
+  hello: ->
+    @processor.hello

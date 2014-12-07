@@ -38,6 +38,9 @@
     "node-cpplint": "~0.1.5",
     "grunt-coffeelint": "0.0.6"
   },
+  "dependencies": {
+    "nan": "1.2.0"
+  },
   "scripts": {
     "prepublish": "grunt clean coffee lint",
     "test": "grunt test"
