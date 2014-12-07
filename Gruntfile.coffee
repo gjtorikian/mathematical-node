@@ -53,6 +53,13 @@ module.exports = (grunt) ->
           stderr: true
           failOnError: true
 
+    release:
+      options:
+        bump: false
+        add: false
+        push: false
+        tagName: "v<%= version %>"
+
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-shell')
   grunt.loadNpmTasks('grunt-coffeelint')
