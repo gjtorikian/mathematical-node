@@ -43,6 +43,7 @@
     "nan": "1.2.0"
   },
   "scripts": {
+    "preinstall": "script/compile_mtex2MML",
     "prepublish": "grunt clean coffee lint",
     "test": "grunt test"
   }
