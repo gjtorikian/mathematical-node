@@ -57,6 +57,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks('grunt-shell')
   grunt.loadNpmTasks('grunt-coffeelint')
   grunt.loadNpmTasks('node-cpplint')
+  grunt.loadNpmTasks('grunt-release');
+
   grunt.registerTask('lint', ['coffeelint', 'cpplint'])
   grunt.registerTask('default', ['coffee', 'lint', 'shell:compile_mtex2MML', 'shell:rebuild'])
   grunt.registerTask('test', ['default', 'shell:test'])
