@@ -43,7 +43,8 @@
     "nan": "1.2.0"
   },
   "scripts": {
-    "prepublish": "grunt clean coffee lint shell:compile_mtex2MML",
+    "prepublish": "grunt clean coffee lint",
+    "preinstall": "script/compile_mtex2MML && npm install --production --ignore-scripts && node-gyp rebuild",
     "test": "grunt test"
   }
 }
