@@ -55,9 +55,6 @@ module.exports = (grunt) ->
 
     release:
       options:
-        bump: false
-        add: false
-        push: false
         tagName: "v<%= version %>"
 
   grunt.loadNpmTasks('grunt-contrib-coffee')

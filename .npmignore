@@ -2,6 +2,8 @@
 /spec
 
 deps/lasem/*
+!deps/lasem/itex2mml
+!deps/lasem/itex2mml/*
 !deps/lasem/src
 !deps/lasem/src/*
 
