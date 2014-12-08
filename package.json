@@ -1,7 +1,7 @@
 {
   "name": "mathematical",
   "description": "Quickly convert math equations into beautiful SVGs/PNGs/MathML.",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "licenses": [
     {
       "type": "MIT"
@@ -36,13 +36,15 @@
     "underscore": "~1.5.2",
     "jasmine-focused": "^1.0.4",
     "node-cpplint": "~0.1.5",
-    "grunt-coffeelint": "0.0.6"
+    "grunt-coffeelint": "0.0.6",
+    "grunt-release": "0.9.0"
   },
   "dependencies": {
     "nan": "1.2.0"
   },
   "scripts": {
     "prepublish": "grunt clean coffee lint",
+    "preinstall": "script/compile_mtex2MML && npm install --production --ignore-scripts && node-gyp rebuild",
     "test": "grunt test"
   }
 }

@@ -8,5 +8,9 @@ notifications:
 node_js:
   - "0.10"
 
+before_install:
+  - npm install -g grunt-cli
+  - script/compile_mtex2MML
+
 git:
   depth: 10

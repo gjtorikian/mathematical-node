@@ -33,8 +33,8 @@ module.exports = (grunt) ->
           include: false
 
     shell:
-      compile_mtex2mml:
-        command: 'cd deps/mtex2MML/src && make'
+      compile_mtex2MML:
+        command: 'script/compile_mtex2MML'
         options:
           stdout: true
           stderr: true
@@ -53,12 +53,18 @@ module.exports = (grunt) ->
           stderr: true
           failOnError: true
 
+    release:
+      options:
+        tagName: "v<%= version %>"
+
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-shell')
   grunt.loadNpmTasks('grunt-coffeelint')
   grunt.loadNpmTasks('node-cpplint')
+  grunt.loadNpmTasks('grunt-release')
+
   grunt.registerTask('lint', ['coffeelint', 'cpplint'])
-  grunt.registerTask('default', ['coffee', 'lint', 'shell:compile_mtex2mml', 'shell:rebuild'])
+  grunt.registerTask('default', ['coffee', 'lint', 'shell:compile_mtex2MML', 'shell:rebuild'])
   grunt.registerTask('test', ['default', 'shell:test'])
   grunt.registerTask 'clean', ->
     grunt.file.delete('lib') if grunt.file.exists('lib')
