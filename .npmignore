@@ -11,6 +11,8 @@ deps/mtex2MML/*
 !deps/mtex2MML/src
 !deps/mtex2MML/src/*
 
+*.a
+*.o
 *.coffee
 *.log
 *~
