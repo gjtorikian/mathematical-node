@@ -16,11 +16,12 @@ class Processor : public node::ObjectWrap {
   public:
     static void Init(Handle<Object> target);
     static NAN_METHOD(Process);
+
     double mPpi;
     double mZoom;
-    int mMaxsize;
-    char *mFormat;
-    char *svg;
+    uint64_t mMaxsize;
+    int mFormat;
+    char *mSvg;
     char *mPng;
 
   private:

@@ -1,8 +1,10 @@
 // Copyright (c) 2014 Garen J. Torikian
+
 #include "processor.h"
 
 #include <string.h>
 #include <stdlib.h>
+
 #include <limits.h>
 #include <lsm.h>
 #include <lsmmathml.h>
@@ -39,6 +41,12 @@ NODE_MODULE(processor, Processor::Init)
 
 NAN_METHOD(Processor::New) {
   NanScope();
+
+  if (args.Length() != 1)
+    NanReturnUndefined();
+
+  assert(args[0]->IsObject());
+
   Processor *processor = new Processor(Local<Object>::Cast(args[0]));
   processor->Wrap(args.This());
   NanReturnUndefined();
@@ -49,8 +57,8 @@ Processor::Processor(Handle<Object> options) {
 
   mPpi = options->Get(NanNew<String>("ppi"))->ToNumber()->NumberValue();
   mZoom = options->Get(NanNew<String>("zoom"))->ToNumber()->NumberValue();
-  // mZoom = NanNew<Number>(options->Get(NanNew<String>("zoom")))->Value();
-  // mFormat = NanNew<String>(options->Get(NanNew<String>("format")))->Value();
+  mMaxsize = options->Get(NanNew<String>("maxsize"))->ToNumber()->NumberValue();
+  mFormat = options->Get(NanNew<String>("format"))->ToNumber()->NumberValue();
 }
 
 Processor::~Processor() {
@@ -114,23 +122,59 @@ cairo_status_t cairoSvgSurfaceCallback(void* closure,
   return CAIRO_STATUS_SUCCESS;
 }
 
+cairo_status_t cairoPngSurfaceCallback(void *closure,
+  const unsigned char* chunk, unsigned int length) {
+  std::string* data = reinterpret_cast<std::string*>(closure);
+  data->append(reinterpret_cast<const char *>(chunk), length);
+
+  return CAIRO_STATUS_SUCCESS;
+}
+
 NAN_METHOD(Processor::Process) {
   NanScope();
-  if (args.Length() < 1)
-    NanReturnValue(NanNew<Boolean>(false));
+  if (args.Length() != 1)
+    NanReturnUndefined();
 
   Processor* process = node::ObjectWrap::Unwrap<Processor>(args.This());
 
-  std::string latex_code(*String::Utf8Value(args[0]));
+  assert(args[0]->IsString());
+
+  std::string latex(*String::Utf8Value(args[0]));
+
+  const char *latex_code = latex.c_str();
+  uint64_t latex_size = latex.size();
+
+  // make sure that the passed latex string is not larger than the maximum value
+  // of a signed long (or the maxsize option)
+  if (process->mMaxsize == 0)
+    process->mMaxsize = LONG_MAX;
+
+  if (latex_size > process->mMaxsize) {
+    ThrowException(Exception::RangeError(
+    String::New("Size of latex string is greater than the maxsize!")));
+    // TODO(gjtorikian): how to printf
+    // ThrowException(Exception::RangeError(
+    // ("Size of latex string (%lu) is greater than the maxsize (%lu)!",
+    //     latex_size, process->mMaxsize)));
+    return scope.Close(Undefined());
+  }
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
   g_type_init();
 #endif
 
+  Local<ObjectTemplate> result = ObjectTemplate::New();
+
   // convert the TeX math to MathML
-  char * mathml = mtex2MML_parse(latex_code.c_str(), latex_code.size());
+  char * mathml = mtex2MML_parse(latex_code, latex_size);
   if (mathml == NULL) {
-    // TODO(gjtorikian): catch
+    ThrowException(Exception::Error(String::New("Failed to parse mtex")));
+    return scope.Close(Undefined());
+  }
+
+  if (process->mFormat == FORMAT_MATHML) {
+    result->Set("mathml", String::New(mathml));
+    mtex2MML_free_string(mathml);
   }
 
   int mathml_size = strlen(mathml);
@@ -140,15 +184,15 @@ NAN_METHOD(Processor::Process) {
 
   mtex2MML_free_string(mathml);
 
-  if (document == NULL)  {
-    // TODO(gjtorikian): catch
+  if (document == NULL) {
+    ThrowException(Exception::Error(String::New("Failed to create document")));
+    return scope.Close(Undefined());
   }
 
   LsmDomView *view;
-  FileFormat format;
 
-  double ppi = 72.0;
-  double zoom = 1.0;  // NUM2DBL(rb_iv_get(self, "@zoom"));
+  double ppi = process->mPpi;
+  double zoom = process->mZoom;
 
   view = lsm_dom_document_create_view(document);
   lsm_dom_view_set_resolution(view, ppi);
@@ -166,20 +210,54 @@ NAN_METHOD(Processor::Process) {
   cairo_surface_t *surface;
   std::string data;
 
-  surface = cairo_svg_surface_create_for_stream(
-                      cairoSvgSurfaceCallback, &data, width_pt, height_pt);
+  if (process->mFormat == FORMAT_SVG) {
+    surface = cairo_svg_surface_create_for_stream(
+                        cairoSvgSurfaceCallback, &data, width_pt, height_pt);
+  } else if (process->mFormat == FORMAT_PNG) {
+    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+  }
 
   cairo = cairo_create(surface);
-  cairo_surface_destroy(surface);
   cairo_scale(cairo, zoom, zoom);
   lsm_dom_view_render(view, cairo, 0, 0);
 
+  switch (process->mFormat) {
+    case FORMAT_PNG:
+      cairo_surface_write_to_png_stream(
+        cairo_get_target(cairo), cairoPngSurfaceCallback, &data);
+      break;
+    default:
+      break;
+  }
+
   cairo_destroy(cairo);
+  cairo_surface_destroy(surface);
   g_object_unref(view);
   g_object_unref(document);
 
-  Local<ObjectTemplate> result = ObjectTemplate::New();
-  result->Set("svg", String::New(data.c_str()));
+  switch (process->mFormat) {
+    case FORMAT_SVG:
+      if (data.empty()) {
+        ThrowException(
+          Exception::TypeError(String::New("Failed to read SVG contents")));
+        return scope.Close(Undefined());
+      }
+      result->Set("svg", String::New(data.c_str()));
+      break;
+    case FORMAT_PNG:
+      if (data.empty()) {
+        ThrowException(
+          Exception::TypeError(String::New("Failed to read PNG contents")));
+        return scope.Close(Undefined());
+      }
+      result->Set("png", node::Buffer::New(data.c_str(), data.length())->handle_);
+      break;
+    default:
+      break;
+  }
+
+  result->Set("width", NanNew<Number>(width_pt));
+  result->Set("height", NanNew<Number>(height_pt));
 
   NanReturnValue(result->NewInstance());
 }
