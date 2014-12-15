@@ -1,6 +1,12 @@
 Mathematical = require('../lib/mathematical')
 
 describe "Mathematical", ->
-  it "loads", ->
-    m = new Mathematical
-    expect 'hello world', m.hello('world')
+  mathematical = null
+
+  beforeEach ->
+    mathematical = new Mathematical
+
+  it "renders multiple calls", ->
+    mathematical.render('$\pi$')
+    output = mathematical.render('$\pi$')['svg']
+    expect 1, output.match(/<svg/).size
