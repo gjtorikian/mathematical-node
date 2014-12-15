@@ -7,6 +7,6 @@ describe "Mathematical", ->
     mathematical = new Mathematical
 
   it "renders multiple calls", ->
-    mathematical.render('$\pi$')
-    output = mathematical.render('$\pi$')['svg']
+    mathematical.render("$\\pi$")
+    output = mathematical.render('$\\pi$')['svg']
     expect 1, output.match(/<svg/).size
