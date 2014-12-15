@@ -5,6 +5,7 @@
 
 #include <node.h>
 #include <v8.h>
+#include <inttypes.h>
 #include <string>
 
 #include "nan.h"
@@ -14,11 +15,19 @@ using namespace v8;  // NOLINT
 class Processor : public node::ObjectWrap {
   public:
     static void Init(Handle<Object> target);
+    static NAN_METHOD(Process);
+    double mPpi;
+    double mZoom;
+    int mMaxsize;
+    char *mFormat;
+    char *svg;
+    char *mPng;
 
   private:
     static NAN_METHOD(New);
-    static NAN_METHOD(Hello);
-    static v8::Persistent<v8::Function> constructor;
+
+    explicit Processor(Handle<Object> options);
+    ~Processor();
 };
 
 #endif  // SRC_PROCESSOR_H_

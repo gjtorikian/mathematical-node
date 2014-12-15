@@ -2,6 +2,24 @@
 #include "processor.h"
 
 #include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <lsm.h>
+#include <lsmmathml.h>
+#include <glib.h>
+#include <glib/gi18n.h>
+#include <glib/gprintf.h>
+#include <gio/gio.h>
+#include <cairo-pdf.h>
+#include <cairo-svg.h>
+#include <cairo-ps.h>
+#include <mtex2MML.h>
+
+typedef enum {
+  FORMAT_SVG,
+  FORMAT_PNG,
+  FORMAT_MATHML
+} FileFormat;
 
 void Processor::Init(Handle<Object> target) {
   NanScope();
@@ -12,7 +30,7 @@ void Processor::Init(Handle<Object> target) {
   newTemplate->InstanceTemplate()->SetInternalFieldCount(1);
 
   Local<ObjectTemplate> proto = newTemplate->PrototypeTemplate();
-  NODE_SET_METHOD(proto, "hello", Processor::Hello);
+  NODE_SET_METHOD(proto, "process", Processor::Process);
 
   target->Set(NanNew<String>("Processor"), newTemplate->GetFunction());
 }
@@ -21,15 +39,147 @@ NODE_MODULE(processor, Processor::Init)
 
 NAN_METHOD(Processor::New) {
   NanScope();
-
+  Processor *processor = new Processor(Local<Object>::Cast(args[0]));
+  processor->Wrap(args.This());
   NanReturnUndefined();
 }
 
-NAN_METHOD(Processor::Hello) {
+Processor::Processor(Handle<Object> options) {
+  NanScope();
+
+  mPpi = options->Get(NanNew<String>("ppi"))->ToNumber()->NumberValue();
+  mZoom = options->Get(NanNew<String>("zoom"))->ToNumber()->NumberValue();
+  // mZoom = NanNew<Number>(options->Get(NanNew<String>("zoom")))->Value();
+  // mFormat = NanNew<String>(options->Get(NanNew<String>("format")))->Value();
+}
+
+Processor::~Processor() {
+}
+
+/**
+ * lsm_mtex_to_mathml:
+ * @mtex: (allow-none): an mtex string
+ * @size: mtex string length, -1 if NULL terminated
+ *
+ * Converts an mtex string to a Mathml representation.
+ *
+ * Return value: a newly allocated string, NULL on parse error. The returned data must be freed using @lsm_mtex_free_mathml_buffer.
+ */
+
+char *
+lsm_mtex_to_mathml(const char *mtex, gssize size) {
+  gsize usize;
+  char *mathml;
+
+  if (mtex == NULL)
+    return NULL;
+
+  if (size < 0)
+    usize = strlen(mtex);
+  else
+    usize = size;
+
+  mathml = mtex2MML_parse(mtex, usize);
+  if (mathml == NULL)
+    return NULL;
+
+  if (mathml[0] == '\0') {
+    mtex2MML_free_string(mathml);
+    return NULL;
+  }
+
+  return mathml;
+}
+
+// /**
+//  * lsm_mtex_free_mathml_buffer:
+//  * @mathml: (allow-none): a mathml buffer
+//  *
+//  * Free the buffer returned by @lsm_mtex_to_mathml.
+//  */
+
+void
+lsm_mtex_free_mathml_buffer(char *mathml) {
+  if (mathml == NULL)
+    return;
+
+  mtex2MML_free_string(mathml);
+}
+
+cairo_status_t cairoSvgSurfaceCallback(void* closure,
+  const unsigned char* chunk, unsigned int length) {
+  std::string* data = reinterpret_cast<std::string*>(closure);
+  data->append(reinterpret_cast<const char *>(chunk), length);
+
+  return CAIRO_STATUS_SUCCESS;
+}
+
+NAN_METHOD(Processor::Process) {
   NanScope();
   if (args.Length() < 1)
     NanReturnValue(NanNew<Boolean>(false));
 
-  NanReturnValue(String::Concat(NanNew<String>("hello "),
-    NanNew<String>("world")));
+  Processor* process = node::ObjectWrap::Unwrap<Processor>(args.This());
+
+  std::string latex_code(*String::Utf8Value(args[0]));
+
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+  g_type_init();
+#endif
+
+  // convert the TeX math to MathML
+  char * mathml = mtex2MML_parse(latex_code.c_str(), latex_code.size());
+  if (mathml == NULL) {
+    // TODO(gjtorikian): catch
+  }
+
+  int mathml_size = strlen(mathml);
+
+  LsmDomDocument *document;
+  document = lsm_dom_document_new_from_memory(mathml, mathml_size, NULL);
+
+  mtex2MML_free_string(mathml);
+
+  if (document == NULL)  {
+    // TODO(gjtorikian): catch
+  }
+
+  LsmDomView *view;
+  FileFormat format;
+
+  double ppi = 72.0;
+  double zoom = 1.0;  // NUM2DBL(rb_iv_get(self, "@zoom"));
+
+  view = lsm_dom_document_create_view(document);
+  lsm_dom_view_set_resolution(view, ppi);
+
+  double width_pt = 2.0, height_pt = 2.0;
+  unsigned int height, width;
+
+  lsm_dom_view_get_size(view, &width_pt, &height_pt, NULL);
+  lsm_dom_view_get_size_pixels(view, &width, &height, NULL);
+
+  width_pt *= zoom;
+  height_pt *= zoom;
+
+  cairo_t *cairo;
+  cairo_surface_t *surface;
+  std::string data;
+
+  surface = cairo_svg_surface_create_for_stream(
+                      cairoSvgSurfaceCallback, &data, width_pt, height_pt);
+
+  cairo = cairo_create(surface);
+  cairo_surface_destroy(surface);
+  cairo_scale(cairo, zoom, zoom);
+  lsm_dom_view_render(view, cairo, 0, 0);
+
+  cairo_destroy(cairo);
+  g_object_unref(view);
+  g_object_unref(document);
+
+  Local<ObjectTemplate> result = ObjectTemplate::New();
+  result->Set("svg", String::New(data.c_str()));
+
+  NanReturnValue(result->NewInstance());
 }
