@@ -250,7 +250,7 @@ NAN_METHOD(Processor::Process) {
           Exception::TypeError(String::New("Failed to read PNG contents")));
         return scope.Close(Undefined());
       }
-      result->Set("png", node::Buffer::New(data.c_str(), data.length())->handle_);
+      result->Set("png", node::Buffer::New(data.c_str(), data.length())->handle_); //NOLINT
       break;
     default:
       break;

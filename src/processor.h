@@ -13,7 +13,7 @@
 using namespace v8;  // NOLINT
 
 class Processor : public node::ObjectWrap {
-  public:
+ public:
     static void Init(Handle<Object> target);
     static NAN_METHOD(Process);
 
@@ -24,7 +24,7 @@ class Processor : public node::ObjectWrap {
     char *mSvg;
     char *mPng;
 
-  private:
+ private:
     static NAN_METHOD(New);
 
     explicit Processor(Handle<Object> options);
