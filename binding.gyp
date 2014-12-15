@@ -40,7 +40,12 @@
             ]
           }
         } ]
-      ]
+      ],
+      "link_settings": {
+        "libraries": [
+          "-lxml2"
+        ]
+      }
     },
     {
       "target_name": "lasem",
