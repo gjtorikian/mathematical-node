@@ -51,7 +51,7 @@ module.exports = (grunt) ->
         options:
           stdout: true
           stderr: true
-          failOnError: true
+          failOnError: false
 
     release:
       options:
