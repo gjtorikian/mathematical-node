@@ -33,10 +33,13 @@ describe "Mathematical", ->
         name = before.split('/').pop()
 
         source = fs.readFileSync(before, "utf8")
-        actual = source.replace(/\$\$([\s\S]+?)\$\$/, convertContent)
-        actual = actual.replace(/\$([\s\S]+?)\$/, convertContent)
+        actual = source.replace(/\$\$([\s\S]+?)\$\$/g, convertContent)
+        actual = actual.replace(/\$([\s\S]+?)\$/g, convertContent)
 
         expected_file = before.replace(/before/, "after").replace(/text/, "html")
+
+        fs.writeFileSync(actual) unless process.env.DEBUG_MATHEMATICAL?
+
         expected = fs.readFileSync(expected_file, "utf8")
 
         expect(actual).toMatch("PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My")

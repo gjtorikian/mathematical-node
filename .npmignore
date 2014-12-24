@@ -1,5 +1,6 @@
 /build
 /spec
+/samples
 
 deps/lasem/*
 !deps/lasem/itex2mml
