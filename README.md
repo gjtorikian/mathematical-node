@@ -41,11 +41,11 @@ The output will be a hash, with keys that depend on the format you want:
 
 `new Mathematical` takes an optional object to define a few options:
 
-* `:ppi` - A double determining the pixels per inch of the resulting SVG (default: `72.0`).
-* `:zoom` - A double determining the zoom level of the resulting SVG (default: `1.0`).
-* `:base64` - A boolean determining whether Mathematical's output should be a base64-encoded SVG string (default: `false`).
-* `:maxsize` - A numeral indicating the `MAXSIZE` the output string can be. (default: `unsigned long`).
-* `:format` - A string indicating whether you want an "svg", "png", or "mathml" output. (default: `svg`).
+* `ppi` - A double determining the pixels per inch of the resulting SVG (default: `72.0`).
+* `zoom` - A double determining the zoom level of the resulting SVG (default: `1.0`).
+* `base64` - A boolean determining whether Mathematical's output should be a base64-encoded SVG string (default: `false`).
+* `maxsize` - A numeral indicating the `MAXSIZE` the output string can be. (default: `unsigned long`).
+* `format` - A string indicating whether you want an "svg", "png", or "mathml" output. (default: `svg`).
 
 Pass these in like this:
 
