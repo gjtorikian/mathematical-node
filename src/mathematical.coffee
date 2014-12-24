@@ -34,7 +34,7 @@ module.exports = class Mathematical
   render: (maths) ->
     throw new TypeError "text must be a string!" unless _.isString(maths)
     maths = _s.strip(maths)
-    throw new SyntaxError "text must be in itex format (`$...$` or `$$...$$`)!" unless _.isNull(maths.match(/\A\${1,2}/))
+    throw new SyntaxError "text must be in tex format (`$...$` or `$$...$$`)!" if _.isNull(maths.match(/^\${1,2}/))
 
     maths = @applyCorrections(maths)
 
