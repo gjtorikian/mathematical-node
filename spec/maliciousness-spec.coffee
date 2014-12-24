@@ -36,10 +36,10 @@ describe "Maliciousness", ->
     m = new Mathematical({maxsize: 2})
     expect(-> m.render('$a \ne b$')).toThrow("Size of latex string (8) is greater than the maxsize (2)")
 
-    # # signed long max
-    # m = new Mathematical({maxsize: 2147483647})
-    # expect(-> m.render('$a \ne b$')).not.toThrow()
+    # signed long max
+    m = new Mathematical({maxsize: 2147483647})
+    expect(-> m.render('$a \ne b$')).not.toThrow()
 
-    # # # unsigned long max
-    # m = new Mathematical({maxsize: 4294967295})
-    # expect(-> m.render('$a \ne b$')).toThrow()
+    # unsigned long max
+    m = new Mathematical({maxsize: 429496729555555555555429496729555555555555429496729555555555555})
+    expect(-> m.render('$a \ne b$')).not.toThrow()

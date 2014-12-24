@@ -11,10 +11,11 @@ describe "MathJax", ->
   mathematical = null
 
   beforeEach ->
-    mathematical = new Mathematical
+    mathematical = new Mathematical({format: "mathml"})
+    spyOn(mathematical, 'render').andCallThrough()
 
   it "works with all the MathJax files", ->
-      glob "#{MATHJAX_TEST_TEX_DIR}/**/*.tex", (er, files) ->
-        _.each files, (file) ->
-          content = fs.readFileSync(file, "utf8")
-          expect(-> mathematical.render(content)).not.toThrow()
+    files = glob.sync "#{MATHJAX_TEST_TEX_DIR}/**/*.tex"
+    _.each files, (file) ->
+      content = fs.readFileSync(file, "utf8")
+      expect(-> mathematical.render(content)).not.toThrow()

@@ -28,18 +28,18 @@ describe "Fixtures", ->
   mathematical = null
 
   it "works with all the fixtures", ->
-    glob "#{fixtures_dir}/before/*.text", (er, files) ->
-      _.each files, (before) ->
-        name = before.split('/').pop()
+    files = glob.sync "#{fixtures_dir}/before/*.text"
+    _.each files, (before) ->
+      name = before.split('/').pop()
 
-        source = fs.readFileSync(before, "utf8")
-        actual = source.replace(/\$\$([\s\S]+?)\$\$/g, convertContent)
-        actual = actual.replace(/\$([\s\S]+?)\$/g, convertContent)
+      source = fs.readFileSync(before, "utf8")
+      actual = source.replace(/\$\$([\s\S]+?)\$\$/g, convertContent)
+      actual = actual.replace(/\$([\s\S]+?)\$/g, convertContent)
 
-        expected_file = before.replace(/before/, "after").replace(/text/, "html")
+      expected_file = before.replace(/before/, "after").replace(/text/, "html")
 
-        fs.writeFileSync(expected_file, actual) if process.env.DEBUG_MATHEMATICAL?
+      fs.writeFileSync(expected_file, actual) if process.env.DEBUG_MATHEMATICAL?
 
-        expected = fs.readFileSync(expected_file, "utf8")
+      expected = fs.readFileSync(expected_file, "utf8")
 
-        expect(actual).toMatch("PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My")
+      expect(actual).toMatch("PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My")

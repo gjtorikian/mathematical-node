@@ -27,8 +27,7 @@ module.exports = class Mathematical
     throw new TypeError "format must be a string!" unless _.isString(@config["format"])
     throw new TypeError "format type must be one of the following formats: #{FORMAT_TYPES.join(', ')}" unless _.contains(FORMAT_TYPES, @config["format"])
 
-    # config = _.clone(@config)
-    # config["format"] = _.indexOf(FORMAT_TYPES, @config["format"])
+    @config["formatInt"] = _.indexOf(FORMAT_TYPES, @config["format"])
 
     @processor = new Processor @config
 

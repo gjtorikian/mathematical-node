@@ -25,6 +25,6 @@ $$
     # check png header
     fs.writeFileSync("#{fixtures_dir}/png/pmatrix.png", data_hash["png"], 'binary')
     fd = fs.openSync("#{fixtures_dir}/png/pmatrix.png", 'r')
-    buffer = new Buffer(16)
-    header = fs.readSync(fd, buffer, 0, 16, 0)
-    expect buffer.toString('hex'), "89504e470d0a1a0a00"
+    buffer = new Buffer(9)
+    header = fs.readSync(fd, buffer, 0, 9, 0)
+    expect(buffer.toString('hex')).toEqual("89504e470d0a1a0a00")

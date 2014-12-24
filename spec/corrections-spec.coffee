@@ -8,7 +8,7 @@ describe "Corrections", ->
 
   it "adjusts lt gt", ->
     simple_lt = "$|q| < 1$"
-    expect /|q| \\lt 1/, mathematical.apply_corrections(simple_lt)
+    expect(mathematical.applyCorrections(simple_lt)).toMatch(/|q| \\lt 1/)
 
     simple_gt = "$|q| > 1$"
-    expect /|q| \\gt 1/, mathematical.apply_corrections(simple_gt)
+    expect(mathematical.applyCorrections(simple_gt)).toMatch(/|q| \\gt 1/)

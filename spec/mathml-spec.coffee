@@ -17,4 +17,4 @@ $$
 
     mathematical = new Mathematical(format: "mathml")
     mathml = mathematical.render(string)["mathml"]
-    expect(mathml).toMatch("<math xmlns='http:\/\/www.w3.org\/1998\/Math\/MathML' display='block'><semantics><mrow><mrow><mo>\(")
+    expect(mathml).toMatch("<math xmlns='http:\/\/www.w3.org\/1998\/Math\/MathML' display='block'><semantics><mrow><mrow><mo>")

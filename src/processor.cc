@@ -59,7 +59,7 @@ Processor::Processor(Handle<Object> options) {
   mPpi = options->Get(NanNew<String>("ppi"))->ToNumber()->NumberValue();
   mZoom = options->Get(NanNew<String>("zoom"))->ToNumber()->NumberValue();
   mMaxsize = options->Get(NanNew<String>("maxsize"))->ToNumber()->NumberValue();
-  mFormat = options->Get(NanNew<String>("format"))->ToNumber()->NumberValue();
+  mFormat = options->Get(NanNew<String>("formatInt"))->ToNumber()->NumberValue();
 }
 
 Processor::~Processor() {
@@ -176,6 +176,7 @@ NAN_METHOD(Processor::Process) {
   if (process->mFormat == FORMAT_MATHML) {
     result->Set("mathml", String::New(mathml));
     mtex2MML_free_string(mathml);
+    NanReturnValue(result->NewInstance());
   }
 
   int mathml_size = strlen(mathml);
