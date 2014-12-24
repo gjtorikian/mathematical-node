@@ -1,6 +1,6 @@
 Mathematical = require('../lib/mathematical')
 
-describe "Mathematical", ->
+describe "Corrections", ->
   mathematical = null
 
   beforeEach ->

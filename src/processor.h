@@ -19,7 +19,7 @@ class Processor : public node::ObjectWrap {
 
     double mPpi;
     double mZoom;
-    uint64_t mMaxsize;
+    uint32_t mMaxsize;
     int mFormat;
     char *mSvg;
     char *mPng;

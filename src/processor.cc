@@ -2,6 +2,7 @@
 
 #include "processor.h"
 
+#include <sstream>
 #include <string.h>
 #include <stdlib.h>
 
@@ -150,12 +151,12 @@ NAN_METHOD(Processor::Process) {
     process->mMaxsize = LONG_MAX;
 
   if (latex_size > process->mMaxsize) {
+    std::stringstream sstm;
+    sstm << "Size of latex string (" << latex_size << ") is greater " << \
+            "than the maxsize (" << process->mMaxsize << ")";
+
     ThrowException(Exception::RangeError(
-    String::New("Size of latex string is greater than the maxsize!")));
-    // TODO(gjtorikian): how to printf
-    // ThrowException(Exception::RangeError(
-    // ("Size of latex string (%lu) is greater than the maxsize (%lu)!",
-    //     latex_size, process->mMaxsize)));
+    String::New(sstm.str().c_str())));
     return scope.Close(Undefined());
   }
 
@@ -168,7 +169,7 @@ NAN_METHOD(Processor::Process) {
   // convert the TeX math to MathML
   char * mathml = mtex2MML_parse(latex_code, latex_size);
   if (mathml == NULL) {
-    ThrowException(Exception::Error(String::New("Failed to parse mtex")));
+    ThrowException(Exception::SyntaxError(String::New("Failed to parse mtex")));
     return scope.Close(Undefined());
   }
 
@@ -185,7 +186,7 @@ NAN_METHOD(Processor::Process) {
   mtex2MML_free_string(mathml);
 
   if (document == NULL) {
-    ThrowException(Exception::Error(String::New("Failed to create document")));
+    ThrowException(Exception::SyntaxError(String::New("Failed to create document")));
     return scope.Close(Undefined());
   }
 

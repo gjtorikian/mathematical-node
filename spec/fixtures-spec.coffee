@@ -23,11 +23,11 @@ convertContent = (eq) ->
 
   "<img class=\"#{type}-math\" data-math-type=\"#{type}-math\" src=\"#{short_svg_content['svg']}\"/>"
 
-describe "Mathematical", ->
+describe "Fixtures", ->
   fixtures_dir = "spec/fixtures"
   mathematical = null
 
-  fit "works with all the fixtures", ->
+  it "works with all the fixtures", ->
     glob "#{fixtures_dir}/before/*.text", (er, files) ->
       _.each files, (before) ->
         name = before.split('/').pop()
@@ -38,7 +38,7 @@ describe "Mathematical", ->
 
         expected_file = before.replace(/before/, "after").replace(/text/, "html")
 
-        fs.writeFileSync(actual) unless process.env.DEBUG_MATHEMATICAL?
+        fs.writeFileSync(expected_file, actual) if process.env.DEBUG_MATHEMATICAL?
 
         expected = fs.readFileSync(expected_file, "utf8")
 
