@@ -26,6 +26,7 @@ module.exports = (grunt) ->
         'src/**/*.cc'
         'src/**/*.h'
       ]
+      linelength: 100
       reporter: 'spec'
       verbosity: 1
       filters:
@@ -51,7 +52,7 @@ module.exports = (grunt) ->
         options:
           stdout: true
           stderr: true
-          failOnError: true
+          failOnError: false
 
     release:
       options:

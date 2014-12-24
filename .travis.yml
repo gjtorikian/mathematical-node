@@ -9,6 +9,8 @@ node_js:
   - "0.10"
 
 before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get -qq -y install libxml2-dev libcairo2-dev libpango1.0-dev ttf-lyx
   - npm install -g grunt-cli
   - script/compile_mtex2MML
 
