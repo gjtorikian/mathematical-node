@@ -46,7 +46,7 @@
   },
   "scripts": {
     "prepublish": "grunt clean coffee lint",
-    "preinstall": "script/compile_mtex2MML && npm install --production --ignore-scripts && node-gyp rebuild",
+    "preinstall": "sh script/bootstrap && script/compile_mtex2MML && npm install --production --ignore-scripts && node-gyp rebuild",
     "test": "grunt test"
   }
 }
