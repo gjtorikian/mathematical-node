@@ -112,8 +112,8 @@ On a Windows machine, I have no idea. Pull requests welcome!
 After cloning the repo:
 
 ```
-npm install
-grunt
+script/bootstrap
+grunt test
 ```
 
 If there were no errors, you're done! Otherwise, make sure to follow the dependency instructions.
