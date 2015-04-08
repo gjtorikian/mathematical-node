@@ -10,11 +10,11 @@ git submodule update --init --recursive
 echo "==> Installing required libraries…"
 
 if [ "$(uname)" == "Darwin" ]; then
-  brew install glib gdk-pixbuf cairo pango
+  brew install glib gdk-pixbuf cairo pango libffi
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-  sudo apt-get -qq -y install libxml2-dev libcairo2-dev libpango1.0-dev ttf-lyx
+  sudo apt-get -qq -y install libxml2-dev libcairo2-dev libpango1.0-dev libffi-dev ttf-lyx
 fi
 
 echo "==> Installing dependencies…"
 
-npm install
+npm install --ignore-scripts
