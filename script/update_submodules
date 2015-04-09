@@ -2,16 +2,24 @@
 
 set -e
 
-cd ext/mathematical/mtex2MML
-git checkout master && git pull
+if [ -z "$1" ]; then
+  BRANCH="master"
+else
+  BRANCH=$1
+fi
+
+cd deps/mtex2MML
+git fetch origin
+git checkout $BRANCH && git pull
 sha=`git rev-parse HEAD`
-cd ../../..
-git add ext/mathematical/mtex2MML
+cd ../..
+git add deps/mtex2MML
 git commit -m "Update mtex2MML to ${sha}"
 
-cd ext/mathematical/lasem
-git checkout master && git pull
+cd deps/lasem
+git fetch origin
+git checkout master && git reset --hard origin/master
 sha=`git rev-parse HEAD`
-cd ..
-git add ext/mathematical/lasem
+cd ../..
+git add deps/lasem
 git commit -m "Update Lasem to ${sha}"

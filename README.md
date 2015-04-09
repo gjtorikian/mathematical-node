@@ -57,13 +57,16 @@ renderer.render('$a \ne b$')
 
 ## Building
 
-Before building this gem, you must install the following libraries:
+Before building this gem, you must install the following programs and libraries:
 
 * glib-2.0
 * gdk-pixbuf-2.0
 * xml2
 * cairo
 * pango
+* libffi
+* ruby
+* bison
 
 You will also need fonts for cmr10, cmmi10, cmex10, and cmsy10.
 
@@ -72,7 +75,7 @@ You will also need fonts for cmr10, cmmi10, cmex10, and cmsy10.
 To install these dependencies on a Mac, everything can be installed via Homebrew:
 
 ```
-brew install glib gdk-pixbuf cairo pango
+brew install glib gdk-pixbuf cairo pango libffi
 ```
 
 Install the fonts with:
@@ -97,7 +100,7 @@ curl -LO http://mirrors.ctan.org/fonts/cm/ps-type1/bakoma/ttf/cmex10.ttf \
 To install these dependencies on a *nix machine, fetch the packages through your package manager. For example:
 
 ```
-sudo apt-get -qq -y install libglib2.0-dev libxml2-dev libcairo2-dev libpango1.0-dev ttf-lyx libgdk-pixbuf2.0-dev
+sudo apt-get -qq -y install libglib2.0-dev libxml2-dev libcairo2-dev libpango1.0-dev libffi ttf-lyx libgdk-pixbuf2.0-dev
 ```
 
 ### Windows install
@@ -109,8 +112,8 @@ On a Windows machine, I have no idea. Pull requests welcome!
 After cloning the repo:
 
 ```
-npm install
-grunt
+script/bootstrap
+grunt test
 ```
 
 If there were no errors, you're done! Otherwise, make sure to follow the dependency instructions.
