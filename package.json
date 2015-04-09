@@ -1,7 +1,7 @@
 {
   "name": "mathematical",
   "description": "Quickly convert math equations into beautiful SVGs/PNGs/MathML.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "licenses": [
     {
       "type": "MIT"
